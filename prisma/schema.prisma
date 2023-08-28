@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum MemberRole {
+  SUPERADMIN
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Profile {
+  id String @id @default(uuid())
+  userId String @unique
+  name String
+  email String @db.Text
+
+  stores Store[]
+  members Member[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Store {
+  id     String @id @default(uuid())
+  name   String
+  userId String
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  members Member[]
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([profileId])
+}
+
+
+model Member {
+  id String @id @default(uuid())
+  role MemberRole @default(ADMIN)
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  storeId String
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([storeId])
+}
