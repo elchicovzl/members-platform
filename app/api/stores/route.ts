@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
+import axios from "axios"
 
 import prismadb from '@/lib/prismadb';
+
 
 export async function POST(
     req: Request,
@@ -19,11 +21,11 @@ export async function POST(
       if (!name) {
         return new NextResponse("Nombre es requerido", { status: 400 });
       }
-  
+
       const store = await prismadb.store.create({
         data: {
           name,
-          userId,
+          userId
         }
       });
     

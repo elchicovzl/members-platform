@@ -4,7 +4,6 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -18,50 +17,109 @@ enum MemberRole {
   GUEST
 }
 
-model Profile {
-  id String @id @default(uuid())
-  userId String @unique
-  name String
-  email String @db.Text
+enum StatusGiveaway {
+  BORRADOR
+  ACTIVO
+  TERMINADO
+  CANCELADO
+  ELIMINADO
+}
 
-  stores Store[]
-  members Member[]
+enum StatusTicket {
+  DISPONIBLE
+  REVISION
+  VENDIDO
+}
+
+model Profile {
+  id        String @id @default(uuid())
+  userId    String @unique
+  name      String
+  email     String @db.Text
+
+  role      MemberRole @default(MODERATOR)
+
+  storeId      String
+  store        Store     @relation("ProfileToStore", fields: [storeId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 model Store {
-  id     String @id @default(uuid())
-  name   String
-  userId String
+  id         String @id @default(uuid())
+  name       String
+  userId     String
 
-  profileId String
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  giveaways  Giveaway[]  @relation("StoreToGiveaway")
+  profiles Profile[] @relation("ProfileToStore")
 
-  members Member[]
-
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-
-  @@index([profileId])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
+model Transaction {
+  id         String @id @default(uuid())
+  code       String
+  imageSrc   String
+  storeId    String
+  giveawayId String
 
-model Member {
-  id String @id @default(uuid())
-  role MemberRole @default(ADMIN)
+  userId   String
+  isPaid   Boolean
+  total    String
 
-  profileId String
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  giveway   Giveaway?  @relation("GiveawayToTransaction", fields: [giveawayId], references: [id])
 
-  storeId String
-  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  tickets  Ticket[]  @relation("TransactionToTicket")
 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([giveawayId])
+}
 
-  @@index([profileId])
+model Ticket {
+  id            String @id @default(uuid())
+  giveawayId    String
+  storeId       String
+  transactionId String?
+  ticketNumber  String
+
+  giveaway      Giveaway     @relation("GiveawayToTicket", fields: [giveawayId], references: [id])
+  transaction   Transaction?  @relation("TransactionToTicket", fields: [transactionId], references: [id])
+  status        StatusTicket @default(DISPONIBLE)
+  userId        String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([giveawayId])
+  @@index([storeId])
+  @@index([transactionId])
+}
+model Giveaway {
+  id           String @id @default(uuid())
+
+  name         String
+  description  String
+  qtyTickets   String
+  imageSrc     String
+
+  status       StatusGiveaway @default(ACTIVO)
+  giveawayDate DateTime
+  price        String   @default("0")
+
+  storeId      String
+  store        Store     @relation("StoreToGiveaway", fields: [storeId], references: [id])
+
+  transaction  Transaction[]  @relation("GiveawayToTransaction")
+  tickets      Ticket[]  @relation("GiveawayToTicket")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
   @@index([storeId])
 }

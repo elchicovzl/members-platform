@@ -11,17 +11,26 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
   const params = useParams();
+  const { role } = props;
 
   const routes = [
     {
       href: `/${params.storeId}`,
       label: 'Resumen',
       active: pathname === `/${params.storeId}`,
+      roles: ["ADMIN", "MODERATOR", "SUPERADMIN"],
+    },
+    { 
+      href: `/${params.storeId}/giveways`,
+      label: 'Sorteos',
+      active: pathname === `/${params.storeId}/giveways`,
+      roles: ["ADMIN", "MODERATOR", "SUPERADMIN"],
     },
     {
       href: `/${params.storeId}/settings`,
       label: 'Opciones',
       active: pathname === `/${params.storeId}/settings`,
+      roles: ["ADMIN", "SUPERADMIN"],
     },
   ]
 
@@ -31,16 +40,17 @@ export function MainNav({
       {...props}
     >
       {routes.map((route) => (
-        <Link
-          key={route.href}
-          href={route.href}
-          className={cn(
-            'text-sm font-medium transition-colors hover:text-primary',
-            route.active ? 'text-black dark:text-white' : 'text-muted-foreground'
-          )}
-        >
-          {route.label}
-      </Link>
+         route.roles.includes(role) ?
+          <Link
+            key={route.href}
+            href={route.href}
+            className={cn(
+              'text-sm font-medium transition-colors hover:text-primary',
+              route.active ? 'text-black dark:text-white' : 'text-muted-foreground'
+            )}
+          >
+            {route.label}
+        </Link> : ""
       ))}
     </nav>
   )
