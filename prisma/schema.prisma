@@ -25,6 +25,11 @@ enum StatusGiveaway {
   ELIMINADO
 }
 
+enum TypeTransaction {
+  MANUAL
+  WEB
+}
+
 enum StatusTicket {
   DISPONIBLE
   REVISION
@@ -63,11 +68,17 @@ model Store {
 model Transaction {
   id         String @id @default(uuid())
   code       String
-  imageSrc   String
+  imageSrc   String?
   storeId    String
   giveawayId String
 
-  userId   String
+  gatewayId  String?
+  userId     String?
+  username   String?
+  email      String?
+  fullname   String?
+  type     TypeTransaction @default(WEB)
+
   isPaid   Boolean
   total    String
 
@@ -82,19 +93,20 @@ model Transaction {
 }
 
 model Ticket {
-  id            String @id @default(uuid())
-  giveawayId    String
-  storeId       String
-  transactionId String?
-  ticketNumber  String
+  id              String @id @default(uuid())
+  giveawayId      String
+  storeId         String
+  transactionCode String?
+  transactionId   String?
+  ticketNumber    String
 
-  giveaway      Giveaway     @relation("GiveawayToTicket", fields: [giveawayId], references: [id])
-  transaction   Transaction?  @relation("TransactionToTicket", fields: [transactionId], references: [id])
-  status        StatusTicket @default(DISPONIBLE)
-  userId        String?
+  giveaway        Giveaway     @relation("GiveawayToTicket", fields: [giveawayId], references: [id])
+  transaction     Transaction?  @relation("TransactionToTicket", fields: [transactionId], references: [id])
+  status          StatusTicket @default(DISPONIBLE)
+  userId          String?
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([giveawayId])
   @@index([storeId])
@@ -107,10 +119,12 @@ model Giveaway {
   description  String
   qtyTickets   String
   imageSrc     String
+  code         String
 
   status       StatusGiveaway @default(ACTIVO)
   giveawayDate DateTime
   price        String   @default("0")
+  featured     Boolean  @default(false)
 
   storeId      String
   store        Store     @relation("StoreToGiveaway", fields: [storeId], references: [id])

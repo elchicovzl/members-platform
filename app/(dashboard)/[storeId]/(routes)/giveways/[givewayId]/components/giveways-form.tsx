@@ -32,7 +32,8 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -42,7 +43,8 @@ const formSchema = z.object({
   giveawayDate: z.date(),
   status: z.string(),
   storeId: z.string(),
-  price: z.string()
+  price: z.string(),
+  featured: z.boolean()
 });
 
 type GivewaysFormValues = z.infer<typeof formSchema>
@@ -74,9 +76,10 @@ export const GivewaysForm: React.FC<GivewaysFormProps> = ({
       qtyTickets: '',
       imageSrc: '',
       giveawayDate: '',
-      status: '',
+      status: 'BORRADOR',
       storeId: '',
-      price:'0'
+      price:'0',
+      featured: false
     }
   });
 
@@ -238,11 +241,12 @@ export const GivewaysForm: React.FC<GivewaysFormProps> = ({
                         <FormItem>
                           <FormLabel>Numero de boletas</FormLabel>
                           <FormControl>
-                              <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                              <Select disabled={loading || initialData} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                                 <SelectTrigger className="">
                                   <SelectValue defaultValue={field.value} placeholder="Seleccione una cantidad" />
                                 </SelectTrigger>
                                 <SelectContent onSelect={field.onChange}>
+                                <SelectItem value="10">10</SelectItem>
                                   <SelectItem value="100">100</SelectItem>
                                   <SelectItem value="1000">1000</SelectItem>
                                 </SelectContent>
@@ -264,7 +268,7 @@ export const GivewaysForm: React.FC<GivewaysFormProps> = ({
                         <FormItem>
                           <FormLabel>Precio de la boleta</FormLabel>
                           <FormControl>
-                            <Input disabled={loading} placeholder="precio del boleto" {...field} />
+                            <Input disabled={loading || initialData} placeholder="precio del boleto" {...field} />
                           </FormControl>
                           <FormDescription>
                             Precio de venta por unidad de las boletas.
@@ -274,18 +278,65 @@ export const GivewaysForm: React.FC<GivewaysFormProps> = ({
                     )}
                   />
                 </div>
+                <div className="md:grid md:grid-cols-3 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Estatus del sorteo</FormLabel>
+                          <FormControl>
+                              <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                                <SelectTrigger className="">
+                                  <SelectValue defaultValue={field.value} placeholder="Seleccione un Estatus" />
+                                </SelectTrigger>
+                                <SelectContent onSelect={field.onChange}>
+                                  <SelectItem value="BORRADOR">Borrador</SelectItem>
+                                  <SelectItem value="ACTIVO">Activo</SelectItem>
+                                  <SelectItem value="TERMINADO">Terminado</SelectItem>
+                                  <SelectItem value="CANCELADO">Cancelado</SelectItem>
+                                </SelectContent>
+                              </Select>
+                          </FormControl>
+                          <FormDescription>
+                            Estado en el que se encuentra el sorteo, solo Activos podran visualizarlo los usuarios.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="featured"
+                    render={({ field }) => (
+                        <FormItem>
+                          <div className="space-y-0.5">
+                            <FormLabel>Sorteo destacado</FormLabel>
+                            <FormDescription>
+                            Sorteo destacado aparecera como Hero principal en la pagina del cliente.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                    )}
+                  />
+
+
+                </div>
                 <Separator />
                 <Button disabled={loading} className="ml-auto" type="submit">
                     {action}
                 </Button>
             </form>
         </Form>
-      <Separator />
-      <ApiAlert 
-        title="NEXT_PUBLIC_API_URL" 
-        variant="public" 
-        description={`${origin}/api/${params.storeId}`}
-      />
+      
     </>
   );
 };

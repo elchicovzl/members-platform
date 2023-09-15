@@ -18,7 +18,7 @@ export const columns: ColumnDef<TicketColumn>[] = [
     header: "Numero de boleta",
   },
   {
-    accessorKey: "transactionId",
+    accessorKey: "transactionCode",
     header: "Transaccion n°",
   },
   {

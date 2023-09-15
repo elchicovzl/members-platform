@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 import prismadb from '@/lib/prismadb';
 import { getRole, padWithLeadingZeros } from '@/lib/utils';
+import randomCode from 'crypto-random-string';
 
 export async function POST(
     req: Request,
@@ -17,7 +18,9 @@ export async function POST(
         qtyTickets,
         imageSrc,
         giveawayDate,
-        price
+        price,
+        status,
+        featured
       } = body;
   
       if (!userId) {
@@ -68,6 +71,9 @@ export async function POST(
         return new NextResponse("Unauthorized", { status: 403 });
       }
 
+      let giveawayCode = randomCode({length: 4, type: 'alphanumeric'});
+      giveawayCode = `${giveawayCode}${Date.now()}`;
+
       const giveway = await prismadb.giveaway.create({
         data: {
           name,
@@ -75,9 +81,11 @@ export async function POST(
           qtyTickets,
           imageSrc,
           giveawayDate,
-          status:"BORRADOR",
+          status,
           storeId:params.storeId,
-          price
+          price,
+          featured,
+          code:giveawayCode
         }
       });
 

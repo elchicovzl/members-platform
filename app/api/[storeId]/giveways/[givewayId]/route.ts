@@ -18,7 +18,8 @@ export async function PATCH(
         imageSrc,
         giveawayDate,
         status,
-        price
+        price,
+        featured,
       } = body;
   
       if (!userId) {
@@ -80,7 +81,8 @@ export async function PATCH(
           imageSrc,
           giveawayDate,
           status,
-          price
+          price,
+          featured
         }
       });
     
@@ -158,7 +160,6 @@ export async function GET(
     { params }:{params:{ storeId:string, givewayId:string }}
   ) {
     try {
-        console.log("llego al recurso?")
         if (!params.givewayId) { 
             return new NextResponse("id del sorteo es requerido", { status: 400 });
         }

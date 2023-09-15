@@ -15,7 +15,11 @@ export async function POST(
             qtyTickets,
             imageSrc,
             total,
-            user
+            user,
+            gatewayId,
+            email,
+            username,
+            fullname
         } = body;
   
       /* if (!userId) {
@@ -38,6 +42,43 @@ export async function POST(
             return new NextResponse("id del cliente es requerido", { status: 400 });
         }
 
+        if (gatewayId) {
+            const transaction = await prismadb.transaction.findFirst({
+                where: {
+                    gatewayId: gatewayId
+                },
+                include: {
+                    tickets: true
+                }
+            });
+
+            if (transaction) {
+                const updateTransaction = await prismadb.transaction.update({
+                    where: {
+                        storeId: params.storeId,
+                        id: params.givewayId
+                    },
+                    data: {
+                        isPaid: true,
+                        gatewayId: gatewayId
+                    }
+                });
+
+                for (const dataUpdateT of transaction.tickets) {
+                    const updatedT = await prismadb.ticket.update({
+                        where: {
+                            id: dataUpdateT.id
+                        },
+                        data: {
+                            status: "VENDIDO",
+                        }
+                    });
+                }
+            }
+
+            return NextResponse.json(transaction);
+        }
+
         const ticketsCount = await prismadb.ticket.count({
             where:{
                 storeId:params.storeId,
@@ -45,8 +86,6 @@ export async function POST(
                 status:"DISPONIBLE",
             }
         });
-
-        console.log("tickets count:", ticketsCount);
 
         const skip = Math.floor(Math.random() * ticketsCount);
         const randomTickets = await prismadb.ticket.findMany({
@@ -59,23 +98,17 @@ export async function POST(
             skip: skip,
         });
 
-        console.log("tickets ramdoms")
-        console.log(randomTickets)
-
         const transaction = await prismadb.transaction.create({
             data: {
                 imageSrc:imageSrc,
                 code:transactionId,
                 total:total,
-                isPaid:true,
+                isPaid:false,
                 userId:user,
                 storeId: params.storeId,
                 giveawayId: params.givewayId
             }
         });
-
-        console.log("transaccion...")
-        console.log(transaction)
 
         for (const dataUpdate of randomTickets) {
             const updated = await prismadb.ticket.update({
@@ -83,10 +116,10 @@ export async function POST(
                     id: dataUpdate.id
                 },
                 data: {
-                    status: "VENDIDO",
+                    status: "REVISION",
                     userId: user,
                     transactionId: transaction.id,
-
+                    transactionCode: transaction.code
                 }
             });
         }

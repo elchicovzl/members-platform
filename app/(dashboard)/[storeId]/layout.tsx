@@ -4,6 +4,7 @@ import { auth } from '@clerk/nextjs';
 import Navbar from '@/components/navbar'
 import prismadb from '@/lib/prismadb';
 import { getStore } from '@/lib/utils';
+import NextBreadcrumb from '@/components/next-breadcrumb';
 
 export default async function DashboardLayout({
   children,
@@ -27,6 +28,14 @@ export default async function DashboardLayout({
   return (
     <>
       <Navbar />
+      <NextBreadcrumb
+        homeElement={'Resumen'}
+        separator={<span> | </span>}
+        activeClasses='text-amber-500'
+        containerClasses='flex py-5 bg-gradient-to-r from-purple-600 to-blue-600' 
+        listClasses='hover:underline mx-2 font-bold'
+        capitalizeLinks
+      />
       {children}
     </>
   );

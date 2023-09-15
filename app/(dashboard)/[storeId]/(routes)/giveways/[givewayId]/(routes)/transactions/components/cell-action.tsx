@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useState } from "react";
-import { Ticket, Edit, MoreHorizontal, Trash, CreditCard } from "lucide-react";
+import { EyeIcon, Edit, MoreHorizontal, Trash } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 
@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertModal } from "@/components/modals/alert-modal";
 
-import { GivewayColumn } from "./columns";
+import { TransactionColumn } from "./columns";
 
 interface CellActionProps {
-  data: GivewayColumn;
+  data: TransactionColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -67,24 +67,9 @@ export const CellAction: React.FC<CellActionProps> = ({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/giveways/${data.id}/transactions`)}
+            onClick={() => ("")}
           >
-            <CreditCard className="mr-2 h-4 w-4" /> Transacciones
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/giveways/${data.id}/tickets`)}
-          >
-            <Ticket className="mr-2 h-4 w-4" /> Boletas
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/giveways/${data.id}`)}
-          >
-            <Edit className="mr-2 h-4 w-4" /> Actualizar
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="mr-2 h-4 w-4" /> Eliminar
+            <EyeIcon className="mr-2 h-4 w-4" /> Ver Transacción
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

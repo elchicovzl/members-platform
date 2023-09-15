@@ -31,7 +31,7 @@ const TicketsPage = async ({
   const formattedTickets: TicketColumn[] = tickets.map((item) => ({
     id: item.id,
     ticketNumber:  item.ticketNumber,
-    transactionId: item.transactionId,
+    transactionCode: item.transactionCode,
     status: item.status,
     user: item.userId
   }));
