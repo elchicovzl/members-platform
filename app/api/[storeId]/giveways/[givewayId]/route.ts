@@ -88,7 +88,6 @@ export async function PATCH(
     
       return NextResponse.json(giveway);
     } catch (error) {
-      console.log(error);
       return new NextResponse("Internal error", { status: 500 });
     }
 };
@@ -150,7 +149,6 @@ export async function DELETE(
 
         return NextResponse.json(giveway);
     } catch (error) {
-      console.log(error);
         return new NextResponse("Internal error", { status: 500 });
     }
 }

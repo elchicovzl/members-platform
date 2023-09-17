@@ -23,8 +23,6 @@ export async function POST(
       if (!fullname) {
         return new NextResponse("Nombre es requerido", { status: 400 });
       }
-      clerkClient
-      console.log("buscando usuarios");
       const password = "Qwerty.19131834";
       const user = await clerkClient.users.createUser(
         {
@@ -37,8 +35,6 @@ export async function POST(
           }
         }
       )
-      console.log("encontro algo?");
-      console.log(user);
 
       /* const store = await prismadb.profile.create({
         data: {
@@ -52,7 +48,6 @@ export async function POST(
     
       return NextResponse.json("good");
     } catch (error) {
-        console.log(error);
       return new NextResponse("Internal error", { status: 500 });
     }
 };

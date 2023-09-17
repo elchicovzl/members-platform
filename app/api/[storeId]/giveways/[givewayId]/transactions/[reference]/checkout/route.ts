@@ -83,7 +83,6 @@ export async function POST(
     
         return NextResponse.json({'success':true});
     } catch (error) {
-        console.log(error);
         return new NextResponse("Internal error", { status: 500 });
     }
 };

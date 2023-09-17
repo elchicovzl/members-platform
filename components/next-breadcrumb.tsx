@@ -18,8 +18,6 @@ const NextBreadcrumb = ({homeElement, separator, containerClasses, listClasses, 
 
     const paths = usePathname()
     const pathNames = paths.split('/').filter( path => path )
-    console.log("pathnames..")
-    console.log(pathNames);
 
     var names = new Array();
     names["giveways"] = "Sorteos";

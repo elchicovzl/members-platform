@@ -119,7 +119,6 @@ export async function POST(
     
       return NextResponse.json(giveway);
     } catch (error) {
-        console.log('[CREATE_GIVEWAY]', error);
       return new NextResponse("Internal error", { status: 500 });
     }
   };

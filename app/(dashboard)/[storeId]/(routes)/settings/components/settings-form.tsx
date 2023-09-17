@@ -83,7 +83,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
     await axios.post(`/api/profiles`, {fullname, email, role});
     }
     catch (error: any) {
-      console.log(error);
+    
     }
 
   }, [form, getToken]);
@@ -91,7 +91,6 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const createModerator = async (data: SettingsFormValues) => {
     try {
       setLoading(true);
-      console.log(data);
       toast.success('Moderador creado.');
 
     } catch (error:any) {
