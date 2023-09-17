@@ -91,7 +91,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const createModerator = async (data: SettingsFormValues) => {
     try {
       setLoading(true);
-      toast.success('Moderador creado.');
+      toast.success('Moderador creado...');
 
     } catch (error:any) {
 
